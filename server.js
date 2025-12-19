@@ -39,7 +39,26 @@ const spec = path.join(__dirname, 'api-spec', 'openapi.yaml');
 // Middleware: JSON parsing, CORS
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
-app.use(cors());
+//app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://skill-share-cyber-frondend-alpha.vercel.app"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
+
+app.options("*", cors());
 
 
 // Session and authentication setup
